@@ -3,7 +3,8 @@ import dlt
 from pyspark.sql.functions import col, expr, current_timestamp, sha2, lower, trim, date_format, window
 from pyspark.sql.types import StructType, StructField, StringType
 
-# Fetch the environment-specific path from the Bundle configuration
+# NEW: Fetch the environment-specific path from the Bundle configuration
+# This matches the 'pipeline.landing_path' key in your resources YAML
 landing_path = spark.conf.get("pipeline.landing_path")
 
 # 1. SCHEMA ENFORCEMENT
