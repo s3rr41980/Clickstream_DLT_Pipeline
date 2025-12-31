@@ -1,17 +1,42 @@
+# This resource defines the compute and orchestration logic for the clickstream ingestion.
+# Managed via Databricks Asset Bundles (DABs) for version-controlled infrastructure.
+
 resources:
   pipelines:
     clickstream_pipeline:
+      # Environment-specific naming convention managed by the bundle target
       name: "[dev] Clickstream Pipeline"
-      # Corrected spelling: continuous
+
+      # RELEASE CHANNEL:
+      # 'current' uses the GA version of DLT/Lakeflow. 
+      # Ensures stability for production workloads.
+      channel: current
+
+      # EXECUTION STRATEGY: 
+      # Continuous mode enables real-time ingestion with lower latency 
+      # than traditional batch-triggered intervals.
       continuous: true 
-      catalog: ${var.catalog}
-      target: ${var.schema}
+
+      # COMPUTE ARCHITECTURE:
+      # Fully managed serverless compute eliminates the need for 
+      # manual instance selection and cluster configuration.
       serverless: true
 
+      # DATA GOVERNANCE:
+      # Targets Unity Catalog for centralized lineage, auditing, and fine-grained access control.
+      catalog: ${var.catalog}
+      target: ${var.schema}
+
+      # LOGIC ENCAPSULATION:
+      # Pointer to the Spark Declarative Pipeline (SDP) transformation logic.
+      # Path is relative to this resource definition file.
       libraries:
         - file:
             path: ../src/my_transformation.py
 
+      # RUNTIME CONFIGURATION:
+      # Injecting environment variables into the Spark Session.
+      # Used in Python/SQL via spark.conf.get("pipeline.landing_path")
       configuration:
-        # These variables are passed into your Spark session
+        # Source location for Auto Loader to monitor for new JSON/Parquet events
         pipeline.landing_path: ${var.landing_path}

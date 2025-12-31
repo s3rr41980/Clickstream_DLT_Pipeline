@@ -1,11 +1,28 @@
+# --- Databricks Asset Bundles ---
+# These are temporary deployment states. Don't push them to Git.
 .databricks/
-build/
-dist/
-__pycache__/
-*.egg-info
-.venv/
-scratch/**
-!scratch/README.md
-**/explorations/**
-**/!explorations/README.md
+.bundle/
+out/
+
+# --- Mac System Files ---
+# Keeps your GitHub clean of Mac-specific window settings
 .DS_Store
+
+# --- Python Junk ---
+# Temporary files created when you run Python code
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+
+# --- VS Code Settings ---
+# Only include if you want to keep your personal editor settings private
+.vscode/
+
+# --- Secrets & Data ---
+# NEVER push your actual data or local secrets
+*.csv
+*.json
+*.parquet
+.env

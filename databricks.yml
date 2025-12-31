@@ -16,9 +16,11 @@ variables:
 
 targets:
   dev:
-    mode: development
+    mode: production
     default: true
-   
+    workspace:
+      root_path: /Workspace/Users/jackgohcc@hotmail.com/.bundle/${bundle.name}/${bundle.target}
+    
     variables:
       catalog: databricks_clickstream_dev
       schema: clickstream_dlt
