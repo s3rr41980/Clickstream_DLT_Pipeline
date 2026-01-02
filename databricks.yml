@@ -1,27 +1,50 @@
+# Databricks Asset Bundle (DAB) Root Configuration
+# Project: Clickstream Lakeflow Pipeline
+# Purpose: Defines the orchestration, environment variables, and deployment targets for the project.
+
 bundle:
+  # Unique identifier for the bundle within the Databricks workspace
   name: clickstream_dlt_pipeline
 
+# MODULARITY:
+# Dynamically includes all YAML definitions from the resources directory.
+# This keeps the root config clean and allows for scaling resources (Job, DLT, Dashboards) separately.
 include:
   - resources/*.yml
 
+# GLOBAL VARIABLES:
+# Defines the schema for environment-specific variables used throughout the pipeline.
 variables:
   catalog:
-    description: The Unity Catalog catalog name.
+    description: "The Unity Catalog catalog name for data governance."
     default: databricks_clickstream_dev
   schema:
-    description: The Unity Catalog schema (target) name.
+    description: "The Unity Catalog schema (target) name for the DLT pipeline output."
     default: clickstream_dlt
   landing_path:
-    description: The storage path for raw bronze data.
+    description: "The ADLS Gen2/S3 cloud storage path where raw bronze data is ingested."
 
+# DEPLOYMENT TARGETS:
+# Configures environment-specific settings (Dev, Staging, Prod).
 targets:
   dev:
+    # MODE: 'production' is used here to bypass 'development' overrides.
+    # This ensures 'continuous: true' and specific security settings are respected in the UI.
     mode: production
+    
+    # Sets this as the default destination for 'databricks bundle deploy' commands.
     default: true
+    
+    # INFRASTRUCTURE PATHING:
+    # Explicitly defines where bundle metadata and artifacts are stored in the Databricks Workspace.
+    # Essential for 'production' mode to avoid collision with other users/deployments.
     workspace:
       root_path: /Workspace/Users/jackgohcc@hotmail.com/.bundle/${bundle.name}/${bundle.target}
     
+    # TARGET-SPECIFIC OVERRIDES:
+    # Maps the physical infrastructure (Storage accounts and UC Catalogs) to the logic.
     variables:
       catalog: databricks_clickstream_dev
       schema: clickstream_dlt
+      # URI for the Azure Data Lake Storage (ADLS) container using the ABFSS driver.
       landing_path: "abfss://raw@azuredarabricksstorage.dfs.core.windows.net/bronze_events_landing/"
